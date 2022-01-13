@@ -41,6 +41,7 @@ func GenerateToken(Uid int,userName string,phone string)(string,error){
 }
 //解析token
 func ParseToken(tokenString string) (*jwt.Token, *Claims, error) {
+	tokenString = tokenString[len("Bearer "):]
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (i interface{}, err error) {
 		return jwtKey, nil

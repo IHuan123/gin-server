@@ -90,7 +90,7 @@ func (con *UserController) Login(c *gin.Context) {
 		return
 	}
 	data := map[string]interface{}{
-		"token":token,
+		"token":"Bearer "+token,
 		"userInfo":res,
 	}
 	con.Success(c,data)
@@ -121,7 +121,7 @@ func (con *UserController) GetUser(c *gin.Context){
 		return
 	}
 	data := map[string]interface{}{
-		"token":tokenString,
+		"token":"Bearer " + tokenString,
 		"userInfo":res,
 	}
 	con.Success(c,data)
