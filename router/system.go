@@ -12,5 +12,6 @@ func InitSystemRouter(r *gin.Engine){
 	{
 		sRouter.GET("/getAllMenus",sCon.GetAllMenus)
 		sRouter.GET("/getAllRoles",sCon.GetAllRoles)
+		sRouter.PUT("/updateMenu",sCon.UpdateMenu)
 	}
 }
