@@ -19,7 +19,7 @@ func main(){
 	fmt.Println("mysql connect success")
 	r := gin.Default() //原理也是调用的gin.New()
 	//设置中间件
-	r.Use(Middlewares.Cors(),rASession.Session("react_admin_session"))
+	r.Use(Middlewares.Cors(),rASession.Session("react_admin_session"),Middlewares.RegisterValidator())
 	//设置静态资源目录
 	pathName, _ := os.Getwd()
 	statusPath := pathName + "/static"

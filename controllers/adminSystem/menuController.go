@@ -3,18 +3,19 @@ package adminSystem
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 	"reactAdminServer/databases"
 )
 
 type Menus struct {
-	MenuId     int     `json:"menu_id" db:"menu_id"`
-	Title      string  `json:"title" db:"title"`
-	Path       string  `json:"path" db:"path"`
-	Icon       string  `json:"icon" db:"icon"`
-	RKey       string  `json:"key" db:"r_key"`
-	Visible    int     `json:"visible" db:"visible"`
-	KeepAlive  int     `json:"keep_alive" db:"keep_alive"`
-	Weight     int     `json:"weight" db:"weight"`
+	MenuId     int     `json:"menu_id" db:"menu_id" binding:"required"`
+	Title      string  `json:"title" db:"title" binding:"required"`
+	Path       string  `json:"path" db:"path" binding:"required"`
+	Icon       string  `json:"icon" db:"icon" binding:"required"`
+	RKey       string  `json:"key" db:"r_key" binding:"required"`
+	Visible    int     `json:"visible" db:"visible" binding:"required"`
+	KeepAlive  int     `json:"keep_alive" db:"keep_alive" binding:"required"`
+	Weight     int     `json:"weight" db:"weight" binding:"required"`
 	ParentKey  string  `json:"parent_key" db:"parent_key"`
 	Children   []Menus `json:"children" db:"children"`
 	ParentName string  `json:"parent_name"`
@@ -79,8 +80,6 @@ func (con *SystemController) UpdateMenu(c *gin.Context) {
 		con.Err(c, err.Error())
 		return
 	}
-	fmt.Printf("%#v\n", params)
-
 	tx, err := databases.DB.Beginx() // 开启事务
 	if err != nil {
 		con.Err(c, err.Error())
@@ -88,34 +87,32 @@ func (con *SystemController) UpdateMenu(c *gin.Context) {
 	}
 	defer func() {
 		if p := recover(); p != nil {
-			tx.Rollback()
+			_ = tx.Rollback()
 			panic(p) // re-throw panic after Rollback
 		} else if err != nil {
 			fmt.Println("rollback")
-			tx.Rollback() // err is non-nil; don't change it
+			_ = tx.Rollback() // err is non-nil; don't change it
 		} else {
-			err = tx.Commit() // err is nil; if Commit returns error update err
+			_ = tx.Commit() // err is nil; if Commit returns error update err
 			fmt.Println("commit")
 		}
 	}()
 	sqlStr := `UPDATE menus SET title=?, r_path=?, icon=?, r_key=?, visible=?, keep_alive=?, weight=?, parent_key=? WHERE menu_id=?`
-	fmt.Println(sqlStr)
-
 	rs, err := tx.Exec(sqlStr, params.Title, params.Path, params.Icon, params.RKey, params.Visible, params.KeepAlive, params.Weight, params.ParentKey, params.MenuId)
 	if err != nil {
 		con.Err(c, err.Error())
 		return
 	}
-	n, err := rs.RowsAffected()
+	n, err := rs.RowsAffected() // 操作影响的行数
 	if err != nil {
 		con.Err(c, err.Error())
 		return
 	}
 	if n != 1 {
-		con.Err(c, "exec sqlStr1 failed")
+		con.Err(c, "数据更新失败！")
 		return
 	}
-	con.Success(c, "success")
+	con.Success(c, "update data success")
 }
 
 //add
@@ -125,5 +122,24 @@ func (con *SystemController) AddMenu(c *gin.Context) {
 
 //delete
 func (con *SystemController) DeleteMenu(c *gin.Context) {
+	var params struct {
+		MenuIds []int `json:"menu_ids" db:"menu_ids" binding:"required"`
+	}
+	err := c.BindJSON(&params)
+	if err != nil {
+		con.Err(c, err.Error())
+		return
+	}
+	sqlStr := `DELETE FROM menus where menu_id IN (?) `
+	query, args, err := sqlx.In(sqlStr, params.MenuIds)
+	if err != nil {
+		con.Err(c, err.Error())
+		return
+	}
+	_, err = databases.DB.Exec(query, args...)
+	if err != nil {
+		con.Err(c, err.Error())
+		return
+	}
 	con.Success(c, "success")
 }
