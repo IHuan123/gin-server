@@ -12,6 +12,7 @@ func InitSystemRouter(r *gin.Engine){
 	{
 		sRouter.GET("/getAllMenus",sCon.GetAllMenus)
 		sRouter.GET("/getAllRoles",sCon.GetAllRoles)
+		sRouter.POST("/addMenu",sCon.AddMenu)
 		sRouter.PUT("/updateMenu",sCon.UpdateMenu)
 		sRouter.DELETE("/deleteMenu",sCon.DeleteMenu)
 	}

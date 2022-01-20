@@ -35,7 +35,7 @@ func TokenAuthMiddleware() gin.HandlerFunc {
 				fmt.Println("无法处理这个token", err)
 				msg = "无法处理这个token"
 			}
-			ctx.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": msg})
+			ctx.JSON(http.StatusOK, gin.H{"code": 401, "msg": msg})
 			ctx.Abort()
 			return
 		}

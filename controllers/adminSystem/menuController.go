@@ -13,9 +13,9 @@ type Menus struct {
 	Path       string  `json:"path" db:"path" binding:"required"`
 	Icon       string  `json:"icon" db:"icon" binding:"required"`
 	RKey       string  `json:"key" db:"r_key" binding:"required"`
-	Visible    int     `json:"visible" db:"visible" binding:"required"`
-	KeepAlive  int     `json:"keep_alive" db:"keep_alive" binding:"required"`
-	Weight     int     `json:"weight" db:"weight" binding:"required"`
+	Visible    *int     `json:"visible" db:"visible" binding:"required"`
+	KeepAlive  *int     `json:"keep_alive" db:"keep_alive" binding:"required"`
+	Weight     *int     `json:"weight" db:"weight" binding:"required"`
 	ParentKey  string  `json:"parent_key" db:"parent_key"`
 	Children   []Menus `json:"children" db:"children"`
 	ParentName string  `json:"parent_name"`
@@ -130,16 +130,46 @@ func (con *SystemController) DeleteMenu(c *gin.Context) {
 		con.Err(c, err.Error())
 		return
 	}
+
+	tx, err := databases.DB.Beginx() // 开启事务
+	if err != nil {
+		con.Err(c, err.Error())
+		return
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p) // re-throw panic after Rollback
+		} else if err != nil {
+			fmt.Println("rollback")
+			_ = tx.Rollback() // err is non-nil; don't change it
+		} else {
+			_ = tx.Commit() // err is nil; if Commit returns error update err
+			fmt.Println("commit")
+		}
+	}()
 	sqlStr := `DELETE FROM menus where menu_id IN (?) `
 	query, args, err := sqlx.In(sqlStr, params.MenuIds)
 	if err != nil {
 		con.Err(c, err.Error())
 		return
 	}
-	_, err = databases.DB.Exec(query, args...)
+	_, err = tx.Exec(query, args...)
 	if err != nil {
 		con.Err(c, err.Error())
 		return
 	}
+	roleMenuSql:=`DELETE FROM role_menu where menu_id IN (?) `
+	rQuery, rArgs, err := sqlx.In(roleMenuSql, params.MenuIds)
+	if err != nil {
+		con.Err(c, err.Error())
+		return
+	}
+	_, err = tx.Exec(rQuery, rArgs...)
+	if err != nil {
+		con.Err(c, err.Error())
+		return
+	}
+
 	con.Success(c, "success")
 }
