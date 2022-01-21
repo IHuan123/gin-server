@@ -8,7 +8,7 @@ import (
 )
 
 type Menus struct {
-	MenuId     int     `json:"menu_id" db:"menu_id" binding:"required"`
+	MenuId     int     `json:"menu_id" db:"menu_id"`
 	Title      string  `json:"title" db:"title" binding:"required"`
 	Path       string  `json:"path" db:"path" binding:"required"`
 	Icon       string  `json:"icon" db:"icon" binding:"required"`
@@ -117,6 +117,29 @@ func (con *SystemController) UpdateMenu(c *gin.Context) {
 
 //add
 func (con *SystemController) AddMenu(c *gin.Context) {
+	var params Menus
+	var sqlStr string
+	err := c.BindJSON(&params)
+	if err != nil {
+		con.Err(c, err.Error())
+		return
+	}
+	//adminSystem.Menus{MenuId:0, Title:"test", Path:"/test", Icon:"android", RKey:"test", Visible:(*int)(0xc00048a448), KeepAlive:(*int)(0xc00048a450), Weight:(*int)(0xc00048a458), ParentKey:"", Children:[]adminSystem.Menus(nil), ParentName:""}
+	sqlStr = `INSERT INTO menus (title,r_path,icon,r_key,visible,keep_alive,weight,parent_key) values(:title,:path,:icon,:r_key,:visible,:keep_alive,:weight,:parent_key)`
+	_,err = databases.DB.NamedExec(sqlStr,map[string]interface{}{
+		"title": params.Title,
+		"path": params.Path,
+		"icon":params.Icon,
+		"r_key":params.RKey,
+		"visible":params.Visible,
+		"keep_alive":params.KeepAlive,
+		"weight":params.Weight,
+		"parent_key":params.ParentKey,
+	})
+	if err != nil {
+		con.Err(c, err.Error())
+		return
+	}
 	con.Success(c, "success")
 }
 
