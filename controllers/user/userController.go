@@ -16,18 +16,7 @@ type UserController struct{
 	base.BaseController
 	captcha.CaptchaImageController
 }
-type User struct {
-	Uid        int    `json:"uid" db:"uid"`
-	UserName   string `json:"username" db:"username"`
-	Avatar     string `json:"avatar" db:"avatar"`
-	DeptId     int    `json:"deptId" db:"deptId"`
-	Email      string `json:"email" db:"email"`
-	Enabled    int    `json:"enabled" db:"enabled"`
-	Phone      string `json:"phone" db:"phone"`
-	Sex        string `json:"sex" db:"sex"`
-	Roles      string `json:"roles" db:"roles"`
-	CreateTime string `json:"createTime" db:"createTime"`
-}
+
 
 type LoginParams struct {
 	UserName string `json:"username"`
@@ -61,7 +50,7 @@ func handleMenus(list []Menus) []Menus {
 //登陆
 func (con *UserController) Login(c *gin.Context) {
 	var params LoginParams
-	var res User
+	var res databases.User
 	err := c.Bind(&params)
 	if err != nil {
 		con.Err(c, err.Error())
@@ -102,7 +91,7 @@ func (con *UserController) Login(c *gin.Context) {
 
 //通过token获取参数
 func (con *UserController) GetUser(c *gin.Context){
-	var res User
+	var res databases.User
 	tokenString := c.GetHeader("Authorization")
 	_,userInfo,err := models.ParseToken(tokenString)
 	if err!=nil{
@@ -153,7 +142,7 @@ func (con *UserController) GetMenus(c *gin.Context){
 
 //获取所有用户
 func (con *UserController) GetAllUser(c *gin.Context){
-	var data []User
+	var data []databases.User
 	sqlStr := `SELECT uid,username,avatar,deptId,email,enabled,phone,sex,roles,createTime FROM t_user`
 	err := databases.DB.Select(&data,sqlStr)
 	if err != nil {

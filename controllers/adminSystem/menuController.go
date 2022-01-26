@@ -47,7 +47,7 @@ func handleMenus(list []Menus) []Menus {
 //获取全部菜单
 func (con *SystemController) GetAllMenus(c *gin.Context) {
 	var data []Menus
-	sqlStr := `SELECT menu_id,title,r_path path,icon,r_key,visible,keep_alive,weight,parent_key FROM menus`
+	sqlStr := `SELECT menu_id,title,r_path path,icon,r_key,visible,keep_alive,weight,parent_key FROM menus order by weight DESC`
 	stmt, err := databases.DB.Prepare(sqlStr)
 	if err != nil {
 		con.Err(c, err.Error())
