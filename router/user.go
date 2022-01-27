@@ -6,16 +6,16 @@ import (
 	"reactAdminServer/middlewares"
 )
 
-func InitLoginRouter(r *gin.Engine){
+func InitLoginRouter(r *gin.Engine) {
 	uCon := user.UserController{}
-	r.POST("/login",uCon.Login)
+	r.POST("/login", uCon.Login)
 	userGroup := r.Group("/user")
 	//使用token中间件
 	userGroup.Use(Middlewares.TokenAuthMiddleware())
 
 	{
-		userGroup.GET("/info", uCon.GetUser)
-		userGroup.GET("/getMenus",uCon.GetMenus)
-		userGroup.GET("/getAllUser",uCon.GetAllUser)
+		userGroup.GET("/info", Middlewares.TokenAuthMiddleware(), uCon.GetUser)
+		userGroup.GET("/getMenus", Middlewares.TokenAuthMiddleware(), uCon.GetMenus)
+		userGroup.GET("/getAllUser", Middlewares.TokenAuthMiddleware(), uCon.GetAllUser)
 	}
 }

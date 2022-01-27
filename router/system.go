@@ -3,18 +3,19 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"reactAdminServer/controllers/adminSystem"
+	Middlewares "reactAdminServer/middlewares"
 )
 
 //系统数据
-func InitSystemRouter(r *gin.Engine){
+func InitSystemRouter(r *gin.Engine) {
 	sCon := &adminSystem.SystemController{}
 	sRouter := r.Group("/system")
 	{
-		sRouter.GET("/getAllMenus",sCon.GetAllMenus)
-		sRouter.GET("/getAllRoles",sCon.GetAllRoles)
-		sRouter.POST("/addMenu",sCon.AddMenu)
-		sRouter.PUT("/updateMenu",sCon.UpdateMenu)
-		sRouter.DELETE("/deleteMenu",sCon.DeleteMenu)
-		sRouter.GET("/getRolesMenus",sCon.GetRolesMenus)
+		sRouter.GET("/getAllMenus", Middlewares.TokenAuthMiddleware(), sCon.GetAllMenus)
+		sRouter.GET("/getAllRoles", Middlewares.TokenAuthMiddleware(), sCon.GetAllRoles)
+		sRouter.POST("/addMenu", Middlewares.TokenAuthMiddleware(), sCon.AddMenu)
+		sRouter.PUT("/updateMenu", Middlewares.TokenAuthMiddleware(), sCon.UpdateMenu)
+		sRouter.DELETE("/deleteMenu", Middlewares.TokenAuthMiddleware(), sCon.DeleteMenu)
+		sRouter.GET("/getRolesMenus", Middlewares.TokenAuthMiddleware(), sCon.GetRolesMenus)
 	}
 }
