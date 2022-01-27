@@ -7,20 +7,16 @@
 [GIN-debug] GET    /status/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (6 handlers)
 [GIN-debug] HEAD   /status/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (6 handlers)
 [GIN-debug] POST   /login                    --> reactAdminServer/controllers/user.(*UserController).Login-fm (6 handlers)
-[GIN-debug] GET    /user/info                --> reactAdminServer/controllers/user.(*UserController).GetUser-fm (7 handlers)
-[GIN-debug] GET    /user/getMenus            --> reactAdminServer/controllers/user.(*UserController).GetMenus-fm (7 handlers)
-[GIN-debug] GET    /user/getAllUser          --> reactAdminServer/controllers/user.(*UserController).GetAllUser-fm (7 handlers)
+[GIN-debug] GET    /user/info                --> reactAdminServer/controllers/user.(*UserController).GetUser-fm (8 handlers)
+[GIN-debug] GET    /user/getMenus            --> reactAdminServer/controllers/user.(*UserController).GetMenus-fm (8 handlers)
+[GIN-debug] GET    /user/getAllUser          --> reactAdminServer/controllers/user.(*UserController).GetAllUser-fm (8 handlers)
 [GIN-debug] GET    /captcha/code             --> reactAdminServer/controllers/captcha.(*CaptchaController).GetCaptcha-fm (6 handlers)
-[GIN-debug] GET    /system/getAllMenus       --> reactAdminServer/controllers/adminSystem.(*SystemController).GetAllMenus-fm (6 handlers)
-[GIN-debug] GET    /system/getAllRoles       --> reactAdminServer/controllers/adminSystem.(*SystemController).GetAllRoles-fm (6 handlers)
-[GIN-debug] POST   /system/addMenu           --> reactAdminServer/controllers/adminSystem.(*SystemController).AddMenu-fm (6 handlers)
-[GIN-debug] PUT    /system/updateMenu        --> reactAdminServer/controllers/adminSystem.(*SystemController).UpdateMenu-fm (6 handlers)
-[GIN-debug] DELETE /system/deleteMenu        --> reactAdminServer/controllers/adminSystem.(*SystemController).DeleteMenu-fm (6 handlers)
-[GIN-debug] GET    /system/getRolesMenus     --> reactAdminServer/controllers/adminSystem.(*SystemController).GetRolesMenus-fm (6 handlers)
+[GIN-debug] GET    /system/getAllMenus       --> reactAdminServer/controllers/adminSystem.(*SystemController).GetAllMenus-fm (7 handlers)
+[GIN-debug] GET    /system/getAllRoles       --> reactAdminServer/controllers/adminSystem.(*SystemController).GetAllRoles-fm (7 handlers)
+[GIN-debug] POST   /system/addMenu           --> reactAdminServer/controllers/adminSystem.(*SystemController).AddMenu-fm (7 handlers)
+[GIN-debug] PUT    /system/updateMenu        --> reactAdminServer/controllers/adminSystem.(*SystemController).UpdateMenu-fm (7 handlers)
+[GIN-debug] DELETE /system/deleteMenu        --> reactAdminServer/controllers/adminSystem.(*SystemController).DeleteMenu-fm (7 handlers)
+[GIN-debug] GET    /system/getRolesMenus     --> reactAdminServer/controllers/adminSystem.(*SystemController).GetRolesMenus-fm (7 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :9000
-[GIN] 2022/01/26 - 16:22:08 | 200 |    1.525816ms |   192.168.0.100 | GET      "/user/info"
-[GIN] 2022/01/26 - 16:22:08 | 200 |    1.766529ms |   192.168.0.100 | GET      "/user/getMenus?roles=1,2"
-[GIN] 2022/01/26 - 16:22:09 | 200 |     421.066µs |   192.168.0.100 | GET      "/system/getAllRoles"
-[GIN] 2022/01/26 - 16:22:10 | 200 |     790.231µs |   192.168.0.100 | GET      "/system/getRolesMenus?rid=1"
