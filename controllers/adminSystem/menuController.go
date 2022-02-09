@@ -73,6 +73,8 @@ func (con *SystemController) GetAllMenus(c *gin.Context) {
 	con.Success(c, res)
 }
 
+
+
 //update
 func (con *SystemController) UpdateMenu(c *gin.Context) {
 	var params Menus

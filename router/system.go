@@ -17,5 +17,7 @@ func InitSystemRouter(r *gin.Engine) {
 		sRouter.PUT("/updateMenu", Middlewares.TokenAuthMiddleware(), sCon.UpdateMenu)
 		sRouter.DELETE("/deleteMenu", Middlewares.TokenAuthMiddleware(), sCon.DeleteMenu)
 		sRouter.GET("/getRolesMenus", Middlewares.TokenAuthMiddleware(), sCon.GetRolesMenus)
+		sRouter.PUT("/updateRoles",Middlewares.TokenAuthMiddleware(),sCon.UpdateRoles)
+		sRouter.DELETE("/deleteRoles",Middlewares.TokenAuthMiddleware(),sCon.DelRoles)
 	}
 }

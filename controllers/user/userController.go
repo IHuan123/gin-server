@@ -121,7 +121,7 @@ func (con *UserController) GetMenus(c *gin.Context){
 	roleStr := c.Query("roles")
 	roles := strings.Split(roleStr,",")
 	var data []Menus
-	sqlStr := `SELECT r.menu_id,m.title,m.r_path path,m.icon,m.r_key,m.visible,m.keep_alive,m.weight,parent_key FROM role_menu r join menus m using(menu_id) where role_id in (?) `
+	sqlStr := `SELECT r.menu_id,m.title,m.r_path path,m.icon,m.r_key,m.visible,m.keep_alive,m.weight,parent_key FROM role_menu r join menus m using(menu_id) where role_id in (?) ORDER BY m.weight DESC`
 	//err := databases.DB.Select(&data,sqlStr,roles)
 	query, args, err := sqlx.In(sqlStr,roles)
 	if err != nil{
