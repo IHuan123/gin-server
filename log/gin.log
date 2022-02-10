@@ -16,15 +16,11 @@
 [GIN-debug] POST   /system/addMenu           --> reactAdminServer/controllers/adminSystem.(*SystemController).AddMenu-fm (7 handlers)
 [GIN-debug] PUT    /system/updateMenu        --> reactAdminServer/controllers/adminSystem.(*SystemController).UpdateMenu-fm (7 handlers)
 [GIN-debug] DELETE /system/deleteMenu        --> reactAdminServer/controllers/adminSystem.(*SystemController).DeleteMenu-fm (7 handlers)
+[GIN-debug] POST   /system/addRoles          --> reactAdminServer/controllers/adminSystem.(*SystemController).AddRole-fm (7 handlers)
 [GIN-debug] GET    /system/getRolesMenus     --> reactAdminServer/controllers/adminSystem.(*SystemController).GetRolesMenus-fm (7 handlers)
 [GIN-debug] PUT    /system/updateRoles       --> reactAdminServer/controllers/adminSystem.(*SystemController).UpdateRoles-fm (7 handlers)
 [GIN-debug] DELETE /system/deleteRoles       --> reactAdminServer/controllers/adminSystem.(*SystemController).DelRoles-fm (7 handlers)
+[GIN-debug] PUT    /system/updateRolesMenus  --> reactAdminServer/controllers/adminSystem.(*SystemController).UpdateRolesMenus-fm (7 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :9000
-[GIN] 2022/02/09 - 18:05:20 | 200 |    1.617628ms |   192.168.0.100 | GET      "/user/info"
-[GIN] 2022/02/09 - 18:05:20 | 200 |     976.588µs |   192.168.0.100 | GET      "/user/getMenus?roles=1,2"
-[GIN] 2022/02/09 - 18:05:20 | 200 |     394.161µs |   192.168.0.100 | GET      "/system/getAllRoles"
-[GIN] 2022/02/09 - 18:05:20 | 200 |     239.164µs |   192.168.0.100 | GET      "/system/getAllRoles"
-[GIN] 2022/02/09 - 18:05:22 | 200 |    2.919007ms |   192.168.0.100 | DELETE   "/system/deleteRoles"
-[GIN] 2022/02/09 - 18:05:22 | 200 |     242.822µs |   192.168.0.100 | GET      "/system/getAllRoles"

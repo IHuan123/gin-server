@@ -1,4 +1,5 @@
 package user
+
 //循环引入会导致 import cycle not allowed
 import (
 	"github.com/gin-gonic/gin"
@@ -12,19 +13,19 @@ import (
 	"strings"
 )
 
-type UserController struct{
+type UserController struct {
 	base.BaseController
 	captcha.CaptchaImageController
 }
 
-
 type LoginParams struct {
 	UserName string `json:"username"`
 	Password string `json:"password"`
-	Code 	 string `json:"code"`
+	Code     string `json:"code"`
 }
 
 type Menus = adminSystem.Menus
+
 func handleMenus(list []Menus) []Menus {
 	var parent []Menus
 	var children []Menus
@@ -33,14 +34,14 @@ func handleMenus(list []Menus) []Menus {
 		item := list[i]
 		if item.ParentKey == "" {
 			parent = append(parent, item)
-		}else{
-			children = append(children,item)
+		} else {
+			children = append(children, item)
 		}
 	}
-	for i,p := range parent{
-		for _,c := range children {
-			if p.RKey == c.ParentKey{
-				parent[i].Children = append(parent[i].Children,c)
+	for i, p := range parent {
+		for _, c := range children {
+			if p.RKey == c.ParentKey {
+				parent[i].Children = append(parent[i].Children, c)
 			}
 		}
 	}
@@ -57,32 +58,32 @@ func (con *UserController) Login(c *gin.Context) {
 		return
 	}
 	code := params.Code
-	captchaId := rASession.GetSession(c,"captchaId")
-	isVerify := con.Verify(captchaId,code)
-	if !isVerify{
-		con.Err(c,"验证码不正确")
+	captchaId := rASession.GetSession(c, "captchaId")
+	isVerify := con.Verify(captchaId, code)
+	if !isVerify {
+		con.Err(c, "验证码不正确")
 		return
 	}
 	querySql := `SELECT uid,username,avatar,deptId,email,enabled,phone,sex,roles,createTime FROM t_user WHERE username = ? AND password = ?`
-	err = databases.DB.Get(&res,querySql,params.UserName, params.Password)
+	err = databases.DB.Get(&res, querySql, params.UserName, params.Password)
 	if err != nil {
-		con.Err(c,"账号或密码错误")
+		con.Err(c, "账号或密码错误")
 		return
 	}
 	if res.Enabled == 0 {
-		con.Unauthorized(c,"该账号已禁用")
+		con.Unauthorized(c, "该账号已禁用")
 		return
 	}
-	token,err := models.GenerateToken(res.Uid,res.UserName,params.Password)
+	token, err := models.GenerateToken(res.Uid, res.UserName, params.Password)
 	if err != nil {
-		con.Err(c,err.Error())
+		con.Err(c, err.Error())
 		return
 	}
 	data := map[string]interface{}{
-		"token":"Bearer "+token,
-		"userInfo":res,
+		"token":    "Bearer " + token,
+		"userInfo": res,
 	}
-	con.Success(c,data)
+	con.Success(c, data)
 }
 
 //添加用户
@@ -90,64 +91,70 @@ func (con *UserController) Login(c *gin.Context) {
 //登出
 
 //通过token获取参数
-func (con *UserController) GetUser(c *gin.Context){
+func (con *UserController) GetUser(c *gin.Context) {
 	var res databases.User
 	tokenString := c.GetHeader("Authorization")
-	_,userInfo,err := models.ParseToken(tokenString)
-	if err!=nil{
-		con.Err(c,err.Error())
+	_, userInfo, err := models.ParseToken(tokenString)
+	if err != nil {
+		con.Err(c, err.Error())
 		return
 	}
 	uid := userInfo.Uid
 	querySql := `SELECT uid,username,avatar,deptId,email,enabled,phone,sex,roles,createTime FROM t_user WHERE uid = ?`
-	err = databases.DB.Get(&res,querySql,uid)
+	err = databases.DB.Get(&res, querySql, uid)
 	if err != nil {
-		con.Err(c,err.Error())
+		con.Err(c, err.Error())
 		return
 	}
 	if res.Enabled == 0 {
-		con.Unauthorized(c,"该账号已禁用")
+		con.Unauthorized(c, "该账号已禁用")
 		return
 	}
 	data := map[string]interface{}{
-		"token":"Bearer " + tokenString,
-		"userInfo":res,
+		"token":    "Bearer " + tokenString,
+		"userInfo": res,
 	}
-	con.Success(c,data)
+	con.Success(c, data)
 }
 
 //通过uid获取菜单
-func (con *UserController) GetMenus(c *gin.Context){
+func (con *UserController) GetMenus(c *gin.Context) {
 	roleStr := c.Query("roles")
-	roles := strings.Split(roleStr,",")
+	roles := strings.Split(roleStr, ",")
 	var data []Menus
-	sqlStr := `SELECT r.menu_id,m.title,m.r_path path,m.icon,m.r_key,m.visible,m.keep_alive,m.weight,parent_key FROM role_menu r join menus m using(menu_id) where role_id in (?) ORDER BY m.weight DESC`
+	sqlStr := `SELECT 
+       r.menu_id,m.title,m.r_path path,m.icon,m.r_key,m.visible,m.keep_alive,m.weight,parent_key 
+FROM 
+     role_menu r join menus m using(menu_id) 
+WHERE 
+      r.role_id in (?) 
+ORDER BY m.weight DESC`
 	//err := databases.DB.Select(&data,sqlStr,roles)
-	query, args, err := sqlx.In(sqlStr,roles)
-	if err != nil{
-		con.Err(c,err.Error())
+
+	query, args, err := sqlx.In(sqlStr, roles)
+	if err != nil {
+		con.Err(c, err.Error())
 		return
 	}
 	// sqlx.In 返回带 `?` bindvar的查询语句, 我们使用Rebind()重新绑定它
 	query = databases.DB.Rebind(query)
 	err = databases.DB.Select(&data, query, args...)
-	if err != nil{
-		con.Err(c,err.Error())
+	if err != nil {
+		con.Err(c, err.Error())
 		return
 	}
 	res := handleMenus(data)
-	con.Success(c,res)
+	con.Success(c, res)
 }
 
-
 //获取所有用户
-func (con *UserController) GetAllUser(c *gin.Context){
+func (con *UserController) GetAllUser(c *gin.Context) {
 	var data []databases.User
 	sqlStr := `SELECT uid,username,avatar,deptId,email,enabled,phone,sex,roles,createTime FROM t_user`
-	err := databases.DB.Select(&data,sqlStr)
+	err := databases.DB.Select(&data, sqlStr)
 	if err != nil {
-		con.Err(c,err.Error())
+		con.Err(c, err.Error())
 		return
 	}
-	con.Success(c,data)
+	con.Success(c, data)
 }
