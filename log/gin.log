@@ -27,10 +27,3 @@
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :9000
-[GIN] 2022/02/11 - 17:19:43 | 200 |   51.906425ms |   192.168.0.100 | GET      "/user/info"
-[GIN] 2022/02/11 - 17:19:43 | 200 |    1.747571ms |   192.168.0.100 | GET      "/user/getMenus?roles=1,2"
-[GIN] 2022/02/11 - 17:19:43 | 200 |     376.876µs |   192.168.0.100 | GET      "/system/getAllMenus"
-[GIN] 2022/02/11 - 17:19:48 | 200 |     387.257µs |   192.168.0.100 | GET      "/system/getAllMenus"
-[GIN] 2022/02/11 - 17:19:48 | 200 |   14.209364ms |   192.168.0.100 | GET      "/system/getAllRoles"
-[GIN] 2022/02/11 - 17:19:49 | 200 |     341.691µs |   192.168.0.100 | GET      "/system/getAllRoles"
-[GIN] 2022/02/11 - 17:19:49 | 200 |     511.636µs |   192.168.0.100 | GET      "/system/s_users"
