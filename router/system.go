@@ -19,10 +19,16 @@ func InitSystemRouter(r *gin.Engine) {
 		sRouter.DELETE("/deleteMenu", Middlewares.TokenAuthMiddleware(), sCon.DeleteMenu)
 
 		//角色
-		sRouter.POST("/addRoles",Middlewares.TokenAuthMiddleware(),sCon.AddRole)
+		sRouter.POST("/addRoles", Middlewares.TokenAuthMiddleware(), sCon.AddRole)
 		sRouter.GET("/getRolesMenus", Middlewares.TokenAuthMiddleware(), sCon.GetRolesMenus)
-		sRouter.PUT("/updateRoles",Middlewares.TokenAuthMiddleware(),sCon.UpdateRoles)
-		sRouter.DELETE("/deleteRoles",Middlewares.TokenAuthMiddleware(),sCon.DelRoles)
-		sRouter.PUT("/updateRolesMenus",Middlewares.TokenAuthMiddleware(),sCon.UpdateRolesMenus)
+		sRouter.PUT("/updateRoles", Middlewares.TokenAuthMiddleware(), sCon.UpdateRoles)
+		sRouter.DELETE("/deleteRoles", Middlewares.TokenAuthMiddleware(), sCon.DelRoles)
+		sRouter.PUT("/updateRolesMenus", Middlewares.TokenAuthMiddleware(), sCon.UpdateRolesMenus)
+
+		//用户
+		sRouter.GET("/s_users", Middlewares.TokenAuthMiddleware(), sCon.GetUser)
+		sRouter.POST("/s_users", Middlewares.TokenAuthMiddleware(), sCon.AddUser)
+		sRouter.PUT("/s_users", Middlewares.TokenAuthMiddleware(), sCon.EditUser)
+		sRouter.DELETE("/s_users", Middlewares.TokenAuthMiddleware(), sCon.DelUser)
 	}
 }

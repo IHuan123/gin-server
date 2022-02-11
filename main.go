@@ -9,6 +9,7 @@ import (
 	"reactAdminServer/databases"
 	_ "reactAdminServer/databases"
 	"reactAdminServer/middlewares"
+	"reactAdminServer/models"
 	rASession "reactAdminServer/rASessions"
 	"reactAdminServer/router"
 )
@@ -17,6 +18,13 @@ func main() {
 	//日志 -----------》
 	// 禁用控制台颜色，将日志写入文件时不需要控制台颜色
 	//gin.DisableConsoleColor()
+	isExistsLog, _ := models.ExistsDir("/log")
+	if !isExistsLog {
+		err := models.CreateDir("/log")
+		if err != nil {
+			panic(err)
+		}
+	}
 	// 记录日志到文件
 	f, _ := os.Create("log/gin.log")
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
@@ -36,8 +44,7 @@ func main() {
 	//设置静态资源目录 -----------》
 	pathName, _ := os.Getwd()
 	statusPath := pathName + "/static"
-	r.StaticFS("/status", http.Dir(statusPath))
-
+	r.StaticFS("/static", http.Dir(statusPath))
 	//初始化router -----------》
 	router.InitLoginRouter(r)
 	router.InitCaptcha(r)
@@ -45,4 +52,5 @@ func main() {
 	if err := r.Run(":9000"); err != nil {
 		panic(err)
 	}
+	fmt.Println("Service started successfully")
 }

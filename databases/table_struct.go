@@ -38,5 +38,6 @@ type User struct {
 	Phone      string `json:"phone" db:"phone"`
 	Sex        string `json:"sex" db:"sex"`
 	Roles      string `json:"roles" db:"roles"`
+	Password   string `json:"password" db:"password"`
 	CreateTime string `json:"createTime" db:"createTime"`
 }

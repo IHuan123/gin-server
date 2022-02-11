@@ -16,6 +16,5 @@ func InitLoginRouter(r *gin.Engine) {
 	{
 		userGroup.GET("/info", Middlewares.TokenAuthMiddleware(), uCon.GetUser)
 		userGroup.GET("/getMenus", Middlewares.TokenAuthMiddleware(), uCon.GetMenus)
-		userGroup.GET("/getAllUser", Middlewares.TokenAuthMiddleware(), uCon.GetAllUser)
 	}
 }

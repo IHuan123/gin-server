@@ -13,9 +13,9 @@ type Menus struct {
 	Path       string  `json:"path" db:"path" binding:"required"`
 	Icon       string  `json:"icon" db:"icon" binding:"required"`
 	RKey       string  `json:"key" db:"r_key" binding:"required"`
-	Visible    *int     `json:"visible" db:"visible" binding:"required"`
-	KeepAlive  *int     `json:"keep_alive" db:"keep_alive" binding:"required"`
-	Weight     *int     `json:"weight" db:"weight" binding:"required"`
+	Visible    *int    `json:"visible" db:"visible" binding:"required"`
+	KeepAlive  *int    `json:"keep_alive" db:"keep_alive" binding:"required"`
+	Weight     *int    `json:"weight" db:"weight" binding:"required"`
 	ParentKey  string  `json:"parent_key" db:"parent_key"`
 	Children   []Menus `json:"children" db:"children"`
 	ParentName string  `json:"parent_name"`
@@ -73,8 +73,6 @@ func (con *SystemController) GetAllMenus(c *gin.Context) {
 	con.Success(c, res)
 }
 
-
-
 //update
 func (con *SystemController) UpdateMenu(c *gin.Context) {
 	var params Menus
@@ -128,15 +126,15 @@ func (con *SystemController) AddMenu(c *gin.Context) {
 	}
 	//adminSystem.Menus{MenuId:0, Title:"test", Path:"/test", Icon:"android", RKey:"test", Visible:(*int)(0xc00048a448), KeepAlive:(*int)(0xc00048a450), Weight:(*int)(0xc00048a458), ParentKey:"", Children:[]adminSystem.Menus(nil), ParentName:""}
 	sqlStr = `INSERT INTO menus (title,r_path,icon,r_key,visible,keep_alive,weight,parent_key) values(:title,:path,:icon,:r_key,:visible,:keep_alive,:weight,:parent_key)`
-	_,err = databases.DB.NamedExec(sqlStr,map[string]interface{}{
-		"title": params.Title,
-		"path": params.Path,
-		"icon":params.Icon,
-		"r_key":params.RKey,
-		"visible":params.Visible,
-		"keep_alive":params.KeepAlive,
-		"weight":params.Weight,
-		"parent_key":params.ParentKey,
+	_, err = databases.DB.NamedExec(sqlStr, map[string]interface{}{
+		"title":      params.Title,
+		"path":       params.Path,
+		"icon":       params.Icon,
+		"r_key":      params.RKey,
+		"visible":    params.Visible,
+		"keep_alive": params.KeepAlive,
+		"weight":     params.Weight,
+		"parent_key": params.ParentKey,
 	})
 	if err != nil {
 		con.Err(c, err.Error())
@@ -148,7 +146,7 @@ func (con *SystemController) AddMenu(c *gin.Context) {
 //delete
 func (con *SystemController) DeleteMenu(c *gin.Context) {
 	var params struct {
-		MenuIds []int `json:"menu_ids" db:"menu_ids" binding:"required"`
+		MenuIds []int `json:"menu_ids" binding:"required"`
 	}
 	err := c.BindJSON(&params)
 	if err != nil {
@@ -184,7 +182,7 @@ func (con *SystemController) DeleteMenu(c *gin.Context) {
 		con.Err(c, err.Error())
 		return
 	}
-	roleMenuSql:=`DELETE FROM role_menu where menu_id IN (?) `
+	roleMenuSql := `DELETE FROM role_menu where menu_id IN (?) `
 	rQuery, rArgs, err := sqlx.In(roleMenuSql, params.MenuIds)
 	if err != nil {
 		con.Err(c, err.Error())

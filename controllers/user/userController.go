@@ -122,12 +122,13 @@ func (con *UserController) GetMenus(c *gin.Context) {
 	roleStr := c.Query("roles")
 	roles := strings.Split(roleStr, ",")
 	var data []Menus
-	sqlStr := `SELECT 
+	//(select max(id) from table group by [去除重复的字段名列表,....])
+	sqlStr := `SELECT distinct 
        r.menu_id,m.title,m.r_path path,m.icon,m.r_key,m.visible,m.keep_alive,m.weight,parent_key 
 FROM 
      role_menu r join menus m using(menu_id) 
 WHERE 
-      r.role_id in (?) 
+      r.role_id in (?)
 ORDER BY m.weight DESC`
 	//err := databases.DB.Select(&data,sqlStr,roles)
 
@@ -145,16 +146,4 @@ ORDER BY m.weight DESC`
 	}
 	res := handleMenus(data)
 	con.Success(c, res)
-}
-
-//获取所有用户
-func (con *UserController) GetAllUser(c *gin.Context) {
-	var data []databases.User
-	sqlStr := `SELECT uid,username,avatar,deptId,email,enabled,phone,sex,roles,createTime FROM t_user`
-	err := databases.DB.Select(&data, sqlStr)
-	if err != nil {
-		con.Err(c, err.Error())
-		return
-	}
-	con.Success(c, data)
 }
