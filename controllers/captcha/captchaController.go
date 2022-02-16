@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"reactAdminServer/rASessions"
+	"reactAdminServer/go_redis"
 	"time"
 )
 
@@ -17,7 +17,8 @@ type CaptchaController struct {
 
 func (con *CaptchaController) GetCaptcha(c *gin.Context){
 	id,b64s := con.GenerateCaptcha()
-	rASession.SetSession(c,"captchaId",id)
+	//rASession.SetSession(c,"captchaId",id)
+	go_redis.RedisClient.SetValue("captchaId", id)
 	con.B64sServe(c.Writer,c.Request,struct {
 		download      bool
 		captchaId     string
@@ -31,7 +32,7 @@ type B64ServeParams struct {
 	captchaBase64 string
 	ext string
 }
-func (con *CaptchaController) B64sServe(	w http.ResponseWriter,r *http.Request,options B64ServeParams){
+func (con *CaptchaController) B64sServe(w http.ResponseWriter,r *http.Request,options B64ServeParams){
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	w.Header().Set("Pragma", "no-cache")
 	w.Header().Set("Expires", "0")

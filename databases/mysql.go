@@ -26,7 +26,7 @@ func InitDB() {
 }
 
 //关闭数据库连接
-func CloseMysql(){
+func MysqlClose(){
 	err := DB.Close()
 	if err!=nil{
 		panic(err)

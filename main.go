@@ -8,13 +8,31 @@ import (
 	"os"
 	"reactAdminServer/databases"
 	_ "reactAdminServer/databases"
+	"reactAdminServer/go_redis"
 	"reactAdminServer/middlewares"
 	"reactAdminServer/models"
 	rASession "reactAdminServer/rASessions"
 	"reactAdminServer/router"
 )
-
+const (
+	serverHost = "127.0.0.1:6379"
+	password   = "123456"
+)
 func main() {
+	err := go_redis.InitRedis(serverHost, password, 0)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	// 关闭redis客户端链接
+	defer func() {
+		err := go_redis.RedisClose()
+		if err != nil {
+			panic(err)
+		}
+	}()
+	go_redis.RedisClient.SetValue("test",123456)
+	fmt.Println(go_redis.RedisClient)
 	//日志 -----------》
 	// 禁用控制台颜色，将日志写入文件时不需要控制台颜色
 	//gin.DisableConsoleColor()
@@ -34,7 +52,7 @@ func main() {
 
 	//连接数据库 -----------》
 	databases.InitDB()
-	defer databases.CloseMysql()
+	defer databases.MysqlClose()
 	fmt.Println("mysql connect success")
 	r := gin.Default() //原理也是调用的gin.New()
 
@@ -49,6 +67,7 @@ func main() {
 	router.InitLoginRouter(r)
 	router.InitCaptcha(r)
 	router.InitSystemRouter(r)
+	router.InitTestRouter(r)
 	if err := r.Run(":9000"); err != nil {
 		panic(err)
 	}

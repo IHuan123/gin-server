@@ -2,14 +2,15 @@ package user
 
 //循环引入会导致 import cycle not allowed
 import (
+	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"reactAdminServer/controllers/adminSystem"
 	"reactAdminServer/controllers/base"
 	"reactAdminServer/controllers/captcha"
 	"reactAdminServer/databases"
+	"reactAdminServer/go_redis"
 	"reactAdminServer/models"
-	rASession "reactAdminServer/rASessions"
 	"strings"
 )
 
@@ -58,7 +59,12 @@ func (con *UserController) Login(c *gin.Context) {
 		return
 	}
 	code := params.Code
-	captchaId := rASession.GetSession(c, "captchaId")
+	//captchaId := rASession.GetSession(c, "captchaId")
+	captchaId ,err := redis.String(go_redis.RedisClient.GetValue("captchaId"))
+	if err!=nil{
+		con.Err(c, err.Error())
+		return
+	}
 	isVerify := con.Verify(captchaId, code)
 	if !isVerify {
 		con.Err(c, "验证码不正确")
