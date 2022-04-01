@@ -31,8 +31,6 @@ func main() {
 			panic(err)
 		}
 	}()
-	go_redis.RedisClient.SetValue("test",123456)
-	fmt.Println(go_redis.RedisClient)
 	//日志 -----------》
 	// 禁用控制台颜色，将日志写入文件时不需要控制台颜色
 	//gin.DisableConsoleColor()

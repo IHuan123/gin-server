@@ -5,11 +5,12 @@ import (
 	"github.com/garyburd/redigo/redis"
 )
 
-
 type RedisC struct {
 	Conn redis.Conn
 }
+
 var RedisClient *RedisC
+
 func InitRedis(serverHot string, password string, dbIndex int) error {
 	setDb := redis.DialDatabase(dbIndex)
 	setPassword := redis.DialPassword(password)
@@ -21,7 +22,7 @@ func InitRedis(serverHot string, password string, dbIndex int) error {
 		Conn: conn,
 	}
 	fmt.Println("redis connect successfully")
-	return  nil
+	return nil
 }
 func RedisClose() error {
 	fmt.Println("redis close")
@@ -32,39 +33,41 @@ func RedisClose() error {
 	return nil
 }
 
-
 //check exists
 func (r *RedisC) ExistsValue(key string) bool {
-	exists,_ := r.Conn.Do("EXISTS",key)
-	fmt.Println("ExistsValue",exists)
-	flag,_:= redis.Int(exists,nil)
-	return flag > 0
+	exists, _ := r.Conn.Do("EXISTS", key)
+	flag, _ := redis.Int(exists, nil)
+	fmt.Println("是否存在指定key，",key, flag == 1)
+	return flag == 1
 }
 
 // set
 func (r *RedisC) SetValue(key string, value interface{}) error {
-	if _, err := r.Conn.Do("set", key, value); err != nil {
-		return err
-	}
-	return nil
-}
-//get
-func (r *RedisC) GetValue(key string) (interface{}, error) {
-	if isExist := r.ExistsValue(key);!isExist{
-		return nil,nil
-	}
-	v, err := r.Conn.Do("get", key)
-	if err != nil {
-		fmt.Printf("未找到key【%s】\n", key)
-		return nil, err
-	}
-	return v, nil
-}
-//del
-func (r *RedisC) DelValue(key string) error{
-	if _,err := r.Conn.Do("del",key);err!=nil{
+	// 带国旗时间的k-v，Ex单位是s  set k v expire time
+	if _, err := r.Conn.Do("SET", key, value); err != nil {
 		return err
 	}
 	return nil
 }
 
+//get
+func (r *RedisC) GetValue(key string) (interface{}, error) {
+	if isExist := r.ExistsValue(key); !isExist {
+		return nil, nil
+	}
+	v, err := r.Conn.Do("GET", key)
+	if err != nil {
+		return nil, err
+	}
+	return v, nil
+}
+
+//del
+func (r *RedisC) DelValue(key string) error {
+	if isExist := r.ExistsValue(key); isExist {
+		if _, err := r.Conn.Do("DEL", key); err != nil {
+			return err
+		}
+	}
+	return nil
+}

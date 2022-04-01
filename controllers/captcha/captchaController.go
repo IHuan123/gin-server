@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"reactAdminServer/go_redis"
+	rASession "reactAdminServer/rASessions"
 	"time"
 )
 
@@ -17,8 +17,10 @@ type CaptchaController struct {
 
 func (con *CaptchaController) GetCaptcha(c *gin.Context){
 	id,b64s := con.GenerateCaptcha()
-	//rASession.SetSession(c,"captchaId",id)
-	go_redis.RedisClient.SetValue("captchaId", id)
+	//captchaIdKey := "captchaId" + "_c_t_" + strconv.Itoa(int(time.Now().Unix()))
+	//fmt.Println(captchaIdKey)
+	rASession.SetSession(c,"captchaId",id)
+	//go_redis.RedisClient.SetValue("captchaId", id,"5000")
 	con.B64sServe(c.Writer,c.Request,struct {
 		download      bool
 		captchaId     string

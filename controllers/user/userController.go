@@ -11,6 +11,8 @@ import (
 	"reactAdminServer/databases"
 	"reactAdminServer/go_redis"
 	"reactAdminServer/models"
+	rASession "reactAdminServer/rASessions"
+	"strconv"
 	"strings"
 )
 
@@ -48,7 +50,35 @@ func handleMenus(list []Menus) []Menus {
 	}
 	return parent
 }
-
+//处理token
+func storeToken(uid int,token string) error {
+	//存储现在的token
+	err := go_redis.RedisClient.SetValue(token, uid)
+	if err != nil {
+		return err
+	}
+	err = go_redis.RedisClient.SetValue(strconv.Itoa(uid), token)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func delStoreToken(uid int) error{
+	//删除之前的token
+	preToken, err := redis.String(go_redis.RedisClient.GetValue(strconv.Itoa(uid)))
+	if err != nil {
+		return err
+	}
+	err = go_redis.RedisClient.DelValue(strconv.Itoa(uid))
+	if err != nil {
+		return err
+	}
+	err = go_redis.RedisClient.DelValue(preToken)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 //登陆
 func (con *UserController) Login(c *gin.Context) {
 	var params LoginParams
@@ -59,12 +89,12 @@ func (con *UserController) Login(c *gin.Context) {
 		return
 	}
 	code := params.Code
-	//captchaId := rASession.GetSession(c, "captchaId")
-	captchaId ,err := redis.String(go_redis.RedisClient.GetValue("captchaId"))
-	if err!=nil{
-		con.Err(c, err.Error())
-		return
-	}
+	captchaId := rASession.GetSession(c, "captchaId")
+	//captchaId ,err := redis.String(go_redis.RedisClient.GetValue("captchaId"))
+	//if err!=nil{
+	//	con.Err(c, err.Error())
+	//	return
+	//}
 	isVerify := con.Verify(captchaId, code)
 	if !isVerify {
 		con.Err(c, "验证码不正确")
@@ -80,11 +110,30 @@ func (con *UserController) Login(c *gin.Context) {
 		con.Unauthorized(c, "该账号已禁用")
 		return
 	}
+	//uid := res.Uid
+	////删除旧的token
+	//err = delStoreToken(uid)
+	//if err != nil {
+	//	con.Err(c, "del token:"+err.Error())
+	//	return
+	//}
+
+	//生成token
 	token, err := models.GenerateToken(res.Uid, res.UserName, params.Password)
 	if err != nil {
 		con.Err(c, err.Error())
 		return
 	}
+
+
+	////储存新的token
+	//err = storeToken(uid, token)
+	//if err != nil {
+	//	con.Err(c, "set token:"+err.Error())
+	//	return
+	//}
+
+
 	data := map[string]interface{}{
 		"token":    "Bearer " + token,
 		"userInfo": res,
